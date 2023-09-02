@@ -1,7 +1,9 @@
 package com.example.msvccursos.controller;
 
-import com.example.msvccursos.entity.Curso;
+import com.example.msvccursos.models.Usuario;
+import com.example.msvccursos.models.entity.Curso;
 import com.example.msvccursos.services.CursoService;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,18 +33,18 @@ public class CursoController {
 
 
     @GetMapping
-    public ResponseEntity<List<Curso>> listar(){
+    public ResponseEntity<List<Curso>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> porId(@PathVariable Long id){
+    public ResponseEntity<?> porId(@PathVariable Long id) {
         Optional<Curso> curso = service.porId(id);
         return curso.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody Curso curso, BindingResult result){
+    public ResponseEntity<?> crear(@Valid @RequestBody Curso curso, BindingResult result) {
         ResponseEntity<Map<String, String>> errors = ValidateErrors(result);
         if (errors != null) return errors;
 
@@ -51,12 +53,12 @@ public class CursoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editar(@Valid @RequestBody Curso curso, BindingResult result, @PathVariable Long id){
+    public ResponseEntity<?> editar(@Valid @RequestBody Curso curso, BindingResult result, @PathVariable Long id) {
         ResponseEntity<Map<String, String>> errors = ValidateErrors(result);
         if (errors != null) return errors;
 
         Optional<Curso> o = service.porId(id);
-        if (o.isPresent()){
+        if (o.isPresent()) {
             Curso cursoDb = o.get();
             cursoDb.setNombre(curso.getNombre());
             return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(cursoDb));
@@ -65,18 +67,61 @@ public class CursoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id){
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         Optional<Curso> o = service.porId(id);
-        if (o.isPresent()){
+        if (o.isPresent()) {
             service.eliminar(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/asignar-usuario/{cursoId}")
+    public ResponseEntity<?> asignarUsuario(@RequestBody Usuario usuario, @PathVariable Long cursoId) {
+        Optional<Usuario> o;
+        try {
+            o = service.asignarUsuario(usuario, cursoId);
+            if (o.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+            }
+        } catch (FeignException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.responseBody());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
+    @PostMapping("/crear-usuario/{cursoId}")
+    public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario, @PathVariable Long cursoId) {
+        Optional<Usuario> o;
+        try {
+            o = service.crearUsuario(usuario, cursoId);
+            if (o.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+            }
+        } catch (FeignException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.responseBody());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/eliminar-usuario/{cursoId}")
+    public ResponseEntity<?> eliminarUsuario(@RequestBody Usuario usuario, @PathVariable Long cursoId) {
+        Optional<Usuario> o;
+        try {
+            o = service.eliminarUsuario(usuario, cursoId);
+            if (o.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(o.get());
+            }
+        } catch (FeignException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.responseBody());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 
     private static ResponseEntity<Map<String, String>> ValidateErrors(BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(error -> {
                 errors.put(error.getField(), error.getDefaultMessage());
@@ -85,10 +130,6 @@ public class CursoController {
         }
         return null;
     }
-
-
-
-
 
 
 }
