@@ -39,7 +39,7 @@ public class CursoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> porId(@PathVariable Long id) {
-        Optional<Curso> curso = service.porId(id);
+        Optional<Curso> curso = service.porIdConUsuario(id);
         return curso.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -80,12 +80,13 @@ public class CursoController {
     public ResponseEntity<?> asignarUsuario(@RequestBody Usuario usuario, @PathVariable Long cursoId) {
         Optional<Usuario> o;
         try {
+            System.out.println(usuario.toString());
             o = service.asignarUsuario(usuario, cursoId);
             if (o.isPresent()) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
             }
         } catch (FeignException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.responseBody());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         return ResponseEntity.notFound().build();
     }
@@ -100,7 +101,7 @@ public class CursoController {
                 return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
             }
         } catch (FeignException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.responseBody());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         return ResponseEntity.notFound().build();
     }
@@ -114,9 +115,16 @@ public class CursoController {
                 return ResponseEntity.status(HttpStatus.OK).body(o.get());
             }
         } catch (FeignException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.responseBody());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         return ResponseEntity.notFound().build();
+    }
+
+
+    @DeleteMapping("/eliminar-curso-usuario/{id}")
+    public ResponseEntity<?> eliminarCursoUsuarioPorId(@PathVariable Long id){
+        service.eliminarCursoUsuarioPorId(id);
+        return ResponseEntity.noContent().build();
     }
 
 

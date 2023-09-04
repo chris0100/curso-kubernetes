@@ -1,6 +1,7 @@
 package org.aguzman.springcloud.msvc.usuarios.services;
 
 import lombok.AllArgsConstructor;
+import org.aguzman.springcloud.msvc.usuarios.clients.CursoClienteRest;
 import org.aguzman.springcloud.msvc.usuarios.models.entity.Usuario;
 import org.aguzman.springcloud.msvc.usuarios.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -15,6 +17,8 @@ public class UsuarioServiceImpl implements UsuarioService{
 
 
     private final UsuarioRepository repository;
+
+    private final CursoClienteRest client;
 
 
     @Override
@@ -39,6 +43,7 @@ public class UsuarioServiceImpl implements UsuarioService{
     @Transactional
     public void eliminar(Long id) {
         repository.deleteById(id);
+        client.eliminarCursoUsuarioPorId(id);
     }
 
     @Override
@@ -49,5 +54,12 @@ public class UsuarioServiceImpl implements UsuarioService{
     @Override
     public boolean existePorEmail(String email) {
         return repository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Usuario> listarPorIds(Iterable<Long> ids) {
+        //return (List<Usuario>) repository.findAllById(ids);
+        return StreamSupport.stream(repository.findAllById(ids).spliterator(), false).toList();
     }
 }
