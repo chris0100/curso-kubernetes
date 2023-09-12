@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.CharArrayWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +36,8 @@ public class UsuarioController {
 
 
     @GetMapping
-    public List<Usuario> listar() {
-        return service.listar();
+    public Map<String, List<Usuario>> listar() {
+        return Collections.singletonMap("usuarios", service.listar());
     }
 
     @GetMapping("/{id}")
@@ -111,7 +113,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/usuarios-por-curso")
-    public ResponseEntity<?> obtenerAlumnosPorCurso(@RequestParam List<Long> ids){
+    public ResponseEntity<?> obtenerAlumnosPorCurso(@RequestParam List<Long> ids) throws IOException {
         return ResponseEntity.ok(service.listarPorIds(ids));
     }
 
