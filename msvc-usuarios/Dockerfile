@@ -1,6 +1,6 @@
 ARG MSVC_NAME=msvc-usuarios
 
-FROM openjdk:17.0.2 as builder
+FROM openjdk:17-jdk-alpine as builder
 
 ARG MSVC_NAME
 
@@ -17,7 +17,7 @@ COPY ./$MSVC_NAME/src ./src
 
 RUN ./mvnw clean package -DskipTests
 
-FROM openjdk:17.0.2
+FROM openjdk:17-jdk-alpine
 
 ARG MSVC_NAME
 
@@ -30,4 +30,5 @@ COPY --from=builder $TARGET_FOLDER/msvc-usuarios-0.0.1-SNAPSHOT.jar .
 ENV PORT 8001
 EXPOSE $PORT
 
-CMD ["java", "-jar", "msvc-usuarios-0.0.1-SNAPSHOT.jar"]
+CMD sleep 30 && java -jar msvc-usuarios-0.0.1-SNAPSHOT.jar
+#CMD ["java", "-jar", "msvc-usuarios-0.0.1-SNAPSHOT.jar"]

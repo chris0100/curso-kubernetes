@@ -4,6 +4,7 @@
 - mvn clean install -DskipTests=true
 - Dar permisos  (chmod +x mvnw)
 
+# Usuarios
 - docker build -t usuarios . 
 - docker build -t usuarios:v1 . -f ./msvc-usuarios/Dockerfile
 - docker images
@@ -12,9 +13,16 @@
 - docker run -d -p 8001:8001 usuarios:v1 (detach, en terminal no se ve ejecucion)
 - docker run -d -p 8001:8001 --rm usuarios (detach, elimina contenedor al detenerlo)
 - docker run -p 8001:8001 --rm -it usuarios /bin/sh (detach, elimina contenedor al detenerlo, interactivo)
+- docker buildx build --platform linux/amd64 -t chris0100eka/usuarios . -f ./msvc-usuarios/Dockerfile (crear nueva imagen en docker hub)
 
 - docker ps
 - docker stop {container_id}
+
+
+# Cursos
+- docker build -t cursos:v1 . -f ./msvc-cursos/Dockerfile
+- docker run -p 8002:8002 --env-file ./msvc-cursos/.env -d --rm --name msvc-cursos --network spring cursos:v1 (con network)
+- docker buildx build --platform linux/amd64 -t chris0100eka/cursos . -f ./msvc-cursos/Dockerfile (crear nueva imagen en docker hub)
 
 
 # Commands
@@ -28,12 +36,22 @@
 - docker pull mysql:8 (descargar imagen)
 - docker volume ls (listar volumes)
 - docker container inspect msvc-usuarios (inspeccionar contenedor)
+- docker-compose up -d (crear y levantar containers)
+- docker-compose down (parar y eliminar containers)
+- docker-compose down -v (eliminar volumes tambien)
+- docker-compose up --build -d (forzar a construir y levantar)
+- docker buildx build --platform linux/amd64 -t chris0100eka/usuarios . -f ./msvc-usuarios/Dockerfile (crear nueva imagen en docker hub)
+
+# Docker Hub
+- docker tag chris0100eka/usuarios (clona la imagen actual)
+- docker push chris0100eka/usuarios (subir cambios imagen)
+- docker pull chris0100eka/usuarios (descargar imagen)
+
+- docker tag curso-kubernetes-msvc-cursos chris0100eka/cursos
+- docker push chris0100eka/cursos (subir cambios)
+- docker pull chris0100eka/cursos (subir cambios)
 
 
-
-# Cursos
-- docker build -t cursos:v1 . -f ./msvc-cursos/Dockerfile
-- docker run -p 8002:8002 --env-file ./msvc-cursos/.env -d --rm --name msvc-cursos --network spring cursos:v1 (con network)
 
 
 # SQL
@@ -44,3 +62,26 @@
 # POSTGRES
 - docker run -p 5532:5432 --name postgres14 --network spring -e POSTGRES_PASSWORD=fence0gras -e POSTGRES_DB=msvc_cursos -d -v data-postgres:/var/lib/postgresql/data --restart=always postgres:14-alpine
 - docker run -it --rm --network spring postgres:14-alpine psql -h postgres14 -U postgres
+
+
+
+# KUBERNETES
+- minikube status
+- minikube start
+- kubectl create deployment mysql8 --image=mysql:8 --port=3306
+- kubectl get pods
+- kubectl logs mysql8-59977b5746-mkt94
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
