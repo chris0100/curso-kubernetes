@@ -92,6 +92,16 @@
 - kubectl apply -f ./deployment-cursos.yaml -f ./svc-cursos.yaml
 - kubectl apply -f ./deployment-usuarios.yaml -f ./svc-usuarios.yaml
 - minikube service msvc-cursos --url
+- kubectl apply -f ./mysql-pv.yaml
+- kubectl apply -f ./mysql-pvc.yaml
+- kubectl apply -f ./deployment-mysql.yaml
+- kubectl apply -f ./postgres-pv.yaml
+- kubectl apply -f ./postgres-pvc.yaml
+- kubectl apply -f ./deployment-postgres.yaml
+- kubectl get pv
+- kubectl get pvc
+- kubectl apply -f ./configmap.yaml
+- kubectl get configmap
 
 
 
