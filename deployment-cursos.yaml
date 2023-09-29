@@ -13,7 +13,7 @@ spec:
         app: msvc-cursos
     spec:
       containers:
-      - image: chris0100eka/cursos:v3
+      - image: chris0100eka/cursos:v4
         name: cursos
         ports:
         - containerPort: 8002

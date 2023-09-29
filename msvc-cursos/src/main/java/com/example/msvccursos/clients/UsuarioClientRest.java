@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "msvc-usuarios", url = "${msvc.usuarios.url}")
+@FeignClient(name = "msvc-usuarios")
 public interface UsuarioClientRest {
 
     @GetMapping("/api/{id}")

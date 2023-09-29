@@ -24,6 +24,9 @@
 - docker run -p 8002:8002 --env-file ./msvc-cursos/.env -d --rm --name msvc-cursos --network spring cursos:v1 (con network)
 - docker buildx build --platform linux/amd64 -t chris0100eka/cursos . -f ./msvc-cursos/Dockerfile (crear nueva imagen en docker hub)
 
+# Gateway
+- docker buildx build --platform linux/amd64 -t chris0100eka/gateway . -f ./msvc-gateway/Dockerfile (crear nueva imagen en docker hub)
+
 
 # Commands
 - docker start -a usuarios:v1 (iniciar un contenedor detach, en un segundo plano, -a queda atachado)
@@ -51,6 +54,8 @@
 - docker push chris0100eka/cursos (subir cambios)
 - docker pull chris0100eka/cursos (subir cambios)
 
+- docker tag chris0100eka/gateway chris0100eka/gateway:v1
+- docker push chris0100eka/gateway:v1 (subir cambios)
 
 
 
@@ -102,6 +107,8 @@
 - kubectl get pvc
 - kubectl apply -f ./configmap.yaml
 - kubectl get configmap
+- kubectl create clusterrolebinding admin --clusterrole=cluster-admin --serviceaccount=default:default  (used for clud kubernetes)
+- kubectl apply -f ./gateway.yaml
 
 
 

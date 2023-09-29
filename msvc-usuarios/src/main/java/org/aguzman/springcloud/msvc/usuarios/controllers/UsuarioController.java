@@ -5,6 +5,7 @@ import org.aguzman.springcloud.msvc.usuarios.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,13 +21,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.CharArrayWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Vector;
 
 @RestController()
 @RequestMapping("/api")
@@ -39,14 +44,21 @@ public class UsuarioController {
     @Autowired
     private ApplicationContext context;
 
+    @Autowired
+    private Environment environment;
+
     @GetMapping("/crash")
     public void crash(){
         ((ConfigurableApplicationContext)context).close();
     }
 
     @GetMapping
-    public Map<String, List<Usuario>> listar() {
-        return Collections.singletonMap("users", service.listar());
+    public ResponseEntity<?> listar() {
+        Map<String, Object> body = new HashMap<>();
+        body.put("users", service.listar());
+        body.put("podinfo", environment.getProperty("MY_POD_NAME") + " : " + environment.getProperty("MY_POD_IP"));
+        body.put("texto", environment.getProperty("config.texto"));
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
