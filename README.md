@@ -108,7 +108,11 @@
 - kubectl apply -f ./configmap.yaml
 - kubectl get configmap
 - kubectl create clusterrolebinding admin --clusterrole=cluster-admin --serviceaccount=default:default  (used for clud kubernetes)
+- kubectl apply -f ./secret.yaml
+- kubectl apply -f ./svc-mysql.yaml
+- kubectl apply -f ./svc-postgres.yaml
 - kubectl apply -f ./gateway.yaml
+- minikube service msvc-gateway --url
 
 
 
